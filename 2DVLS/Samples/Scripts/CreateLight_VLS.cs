@@ -106,7 +106,7 @@ public class CreateLight_VLS : MonoBehaviour
 
     void OnGUI()
     {
-        //windowRect = GUI.Window(0, windowRect, WindowFunc, "Settings");
+        windowRect = GUI.Window(0, windowRect, WindowFunc, "Settings");
     }
 
     int selection = 0;

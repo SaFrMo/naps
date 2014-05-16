@@ -3,11 +3,11 @@
 public class Manipulation : MonoBehaviour
 {
 	public static GameObject selectedObject;
+	// deselect
+	public KeyCode deselectKey = KeyCode.Space;
 
 	// how fast mouse rotates the object
 	public float rotationRate = 10f;
-	// are we rotating (dragging) the object?
-	private bool dragging = true;
 	// scale variables. currentScale always tries to lerp to targetScale at resizeRate.
 	private float currentScale = 1f;
 	private float targetScale = 1f;
@@ -17,37 +17,33 @@ public class Manipulation : MonoBehaviour
 	// target scale is clamped between min and max values
 	private float minScale = .3f;
 	private float maxScale = 5f;
-	
-	// left click to hold and drag, right click to toggle free-drag
-	private void DragFunctions ()
+	// constrict rotations and scale
+	public bool allowXRotate = true;
+	public bool allowYRotate = true;
+	public bool allowScale = true;
+
+	public enum Mode
 	{
-		// hold and drag with left click
-		if (Input.GetMouseButton (0))
-		{
-			dragging = true;
-		}
-		if (Input.GetMouseButtonUp (0))
-		{
-			dragging = false;
-		}
-		
-		// toggle with right click - don't allow when dragging with left click
-		if (Input.GetMouseButtonDown (1) && !Input.GetMouseButton (0))
-		{
-			dragging = !dragging;
-		}
+		Move,
+		Rotate
 	}
-	
-	private void MoveObject ()
+	private Mode currentMode = Mode.Move;
+	// switch between manipulation types - START HERE
+
+	// select this gameObject, allowing it to be manipulated
+	private void OnMouseDown ()
 	{
-		if (dragging)
-		{
-			// TODO: edit this to lerp to a target, like scaling? this may be choppy
-			// Y axis rotation
+		selectedObject = gameObject;
+	}
+
+	private void RotateObject ()
+	{
+		// Y axis rotation
+		if (allowYRotate)
 			transform.Rotate (Vector3.down * Input.GetAxis ("Horizontal") * rotationRate);
-			// X axis rotation
+		// X axis rotation
+		if (allowXRotate)
 			transform.Rotate (Vector3.right * Input.GetAxis ("Vertical") * rotationRate);
-		}
 	}
 	
 	private void ScaleObject ()
@@ -81,9 +77,15 @@ public class Manipulation : MonoBehaviour
 	
 	private void Update ()
 	{
-		DragFunctions();
-		MoveObject();
-		ScaleObject();
+		if (selectedObject == gameObject)
+		{
+			RotateObject();
+			if (allowScale) { ScaleObject(); }
+		}
+
+		// clear movement selection
+		if (Input.GetKeyDown (deselectKey))
+			selectedObject = null;
 	}
 	
 }
