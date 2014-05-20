@@ -110,7 +110,7 @@ public class CreateLight_VLS : MonoBehaviour
     }
 
     int selection = 0;
-    Rect windowRect = new Rect(20, 20, 300, 380);
+    //Rect windowRect = new Rect(20, 20, 300, 380);
     void WindowFunc(int id)
     {
         if (GUILayout.Button("Clear Lights"))

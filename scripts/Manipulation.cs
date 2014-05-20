@@ -4,10 +4,15 @@ public class Manipulation : MonoBehaviour
 {
 	public static GameObject selectedObject;
 
+	// hint - rotate object toward correct value
+	public KeyCode hintKey = KeyCode.E;
+	public KeyCode zRotateKey = KeyCode.LeftShift;
 	// how fast mouse rotates the object
 	public float rotationRate = 10f;
 	// are we rotating (dragging) the object?
 	private bool dragging = true;
+
+	/*
 	// scale variables. currentScale always tries to lerp to targetScale at resizeRate.
 	private float currentScale = 1f;
 	private float targetScale = 1f;
@@ -17,6 +22,7 @@ public class Manipulation : MonoBehaviour
 	// target scale is clamped between min and max values
 	private float minScale = .3f;
 	private float maxScale = 5f;
+	*/
 	
 	// left click to hold and drag, right click to toggle free-drag
 	private void DragFunctions ()
@@ -42,50 +48,72 @@ public class Manipulation : MonoBehaviour
 	{
 		if (dragging)
 		{
-			// TODO: edit this to lerp to a target, like scaling? this may be choppy
-			// Y axis rotation
-			transform.RotateAround (renderer.bounds.center, Vector3.down, Input.GetAxis ("Horizontal") * rotationRate);
-			// X axis rotation
-			transform.Rotate (Vector3.right * Input.GetAxis ("Vertical") * rotationRate);
+			if (Input.GetKey (zRotateKey))
+			{
+				transform.Rotate (Vector3.forward * Input.GetAxis ("Horizontal") * rotationRate);
+			}
+
+			else 
+			{
+				// Y axis rotation
+				transform.Rotate (Vector3.down * Input.GetAxis ("Horizontal") * rotationRate);
+				// X axis rotation
+				transform.Rotate (Vector3.right * Input.GetAxis ("Vertical") * rotationRate);
+			}
+
 		}
 	}
-	
-	private void ScaleObject ()
+
+
+	public float hintRate = 0.5f;
+	private void Hint ()
 	{
-		// enlarge
-		if (Input.GetAxis ("Mouse ScrollWheel") < 0)
+		// snap-to on light touch
+		if (Input.GetKeyDown(hintKey))
 		{
-			targetScale += scaleMouseRate;
+			// round rotation
+			Vector3 rot = transform.rotation.eulerAngles;
+			transform.rotation = Quaternion.Euler (Mathf.Round (rot.x),
+			                                       Mathf.Round (rot.y),
+			                                       Mathf.Round (rot.z));
 		}
-		// shrink
-		if (Input.GetAxis ("Mouse ScrollWheel") > 0)
+		// hold for hint
+		if (Input.GetKey(hintKey))
 		{
-			targetScale -= scaleMouseRate;
+			// TODO: Start here. Create a "close enough" identifier for arrays/lists of numbers
+			if (transform.rotation == originalRotation)
+			{
+				print ("YOU WIN");
+			}
+
+			transform.rotation = Quaternion.Euler (Vector3.RotateTowards (transform.rotation.eulerAngles,
+			                                                              originalRotation.eulerAngles,
+			                                                              hintRate * Time.deltaTime,
+			                                                              0));
+
+
 		}
-		
-		// min-max the target scale value
-		targetScale = Mathf.Clamp (targetScale, minScale, maxScale);
-		
-		// lerp to target scale
-		if (currentScale != targetScale)
-		{
-			currentScale = Mathf.Lerp (currentScale, targetScale, resizeRate * Time.deltaTime);
-		}
-		
-		// min-max the current scale value (just to be safe)
-		currentScale = Mathf.Clamp (currentScale, minScale, maxScale);
-		
-		// apply current scale to model
-		transform.localScale = Vector3.one * currentScale;
+	}
+
+	// store correct rotation
+	private Quaternion originalRotation;
+	private void Start ()
+	{
+		originalRotation = transform.rotation;
+		transform.rotation = Quaternion.Euler (new Vector3 (UnityEngine.Random.Range (0, 360),
+							                                  UnityEngine.Random.Range (0, 360),
+							                                  UnityEngine.Random.Range (0, 360)));
 	}
 	
 	private void Update ()
 	{
+
+
 		// alpha purposes only
 		if (Input.GetKeyDown(KeyCode.Escape)) { Application.Quit(); }
-		DragFunctions();
+		Hint ();
+		//DragFunctions();
 		MoveObject();
-		ScaleObject();
 	}
 	
 }
