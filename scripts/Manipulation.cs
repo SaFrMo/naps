@@ -81,7 +81,7 @@ public class Manipulation : MonoBehaviour
 		if (Input.GetKey(hintKey))
 		{
 			// TODO: Start here. Create a "close enough" identifier for arrays/lists of numbers
-			if (transform.rotation == originalRotation)
+			if (transform.rotation.eulerAngles == originalRotation.eulerAngles)
 			{
 				print ("YOU WIN");
 			}
@@ -100,9 +100,11 @@ public class Manipulation : MonoBehaviour
 	private void Start ()
 	{
 		originalRotation = transform.rotation;
-		transform.rotation = Quaternion.Euler (new Vector3 (UnityEngine.Random.Range (0, 360),
-							                                  UnityEngine.Random.Range (0, 360),
-							                                  UnityEngine.Random.Range (0, 360)));
+		/*
+		transform.Rotate  (new Vector3 (UnityEngine.Random.Range (0, 360),
+							                          UnityEngine.Random.Range (0, 360),
+		                                              UnityEngine.Random.Range (0, 360)));
+		                                              */
 	}
 	
 	private void Update ()
