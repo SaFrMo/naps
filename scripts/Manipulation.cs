@@ -44,7 +44,7 @@ public class Manipulation : MonoBehaviour
 		{
 			// TODO: edit this to lerp to a target, like scaling? this may be choppy
 			// Y axis rotation
-			transform.Rotate (Vector3.down * Input.GetAxis ("Horizontal") * rotationRate);
+			transform.RotateAround (renderer.bounds.center, Vector3.down, Input.GetAxis ("Horizontal") * rotationRate);
 			// X axis rotation
 			transform.Rotate (Vector3.right * Input.GetAxis ("Vertical") * rotationRate);
 		}
@@ -81,6 +81,8 @@ public class Manipulation : MonoBehaviour
 	
 	private void Update ()
 	{
+		// alpha purposes only
+		if (Input.GetKeyDown(KeyCode.Escape)) { Application.Quit(); }
 		DragFunctions();
 		MoveObject();
 		ScaleObject();
