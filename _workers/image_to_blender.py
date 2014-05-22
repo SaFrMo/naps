@@ -36,7 +36,8 @@ def convert_to_shadower(filename):
 
     """
     img = Image.open(path + filename)
-    img = img.resize((round(img.size[0] / 2), round(img.size[1]/2)))
+    #img = img.resize((round(img.size[0] / 2), round(img.size[1]/2)))
+    img = img.resize((50, 75))
     img_pixels = img.load()
     for y in range(img.size[1]):
         for x in range(img.size[0]):

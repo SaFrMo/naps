@@ -36,12 +36,13 @@ public class CameraControl : MonoBehaviour {
 		switch (currentCamMode)
 		{
 		case CamMode.FollowPlayer:
-			goalPlayerMode = player.transform.position + Vector3.back * 10;
+			transform.position = player.transform.position + Vector3.back * 10;
+			/*
 			if (transform.position != goalPlayerMode)
 			{
 				transform.position = Vector3.Lerp (transform.position, goalPlayerMode, cameraLerpRate * Time.deltaTime);
 			}
-
+			*/
 
 			break;
 
